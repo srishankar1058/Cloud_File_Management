@@ -11,7 +11,7 @@ import {
   signInWithGoogle
 } from './services/firebase';
 
-const MRISHAN_LOGO = '/icon.png';
+const MRISHAN_LOGO = '/image.png';
 
 function friendlyError(code: string) {
   switch (code) {

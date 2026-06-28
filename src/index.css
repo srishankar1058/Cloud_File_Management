@@ -1,0 +1,357 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── MriShan Drive — Design Tokens ────────────────────────────────────────── */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-shadow: 0 4px 24px rgba(99, 102, 241, 0.08);
+  --glass-blur: blur(18px);
+  --radius-card: 18px;
+  --radius-lg: 20px;
+  --accent-primary: #3B82F6;
+  --accent-secondary: #6366F1;
+  --transition-ui: 200ms ease;
+  --transition-page: 300ms ease;
+
+  color: #334155;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ─── App Root — Glassmorphism Background ───────────────────────────────────── */
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 50%, #f5f0ff 100%);
+  background-attachment: fixed;
+}
+
+/* Subtle noise/grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark mode root overrides */
+html.dark,
+html.dark body,
+html.dark #root {
+  background: linear-gradient(135deg, #0f172a 0%, #0c1120 50%, #12102a 100%);
+  color: #f1f5f9;
+}
+
+/* ─── Theme-aware root background (for App.tsx's inner shell div) ───────────────── */
+/* App.tsx previously hardcoded this gradient as an inline style, which always
+   overrode the dark-mode gradient above regardless of the .dark class — so
+   the visible page background never actually changed on theme toggle even
+   though every other dark: utility did. This class responds to .dark instead. */
+.theme-root-bg {
+  background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 50%, #f5f0ff 100%);
+  transition: background 300ms ease;
+}
+
+html.dark .theme-root-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #0c1120 50%, #12102a 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
+}
+
+html.dark * {
+  scrollbar-color: #334155 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+html.dark *::-webkit-scrollbar-thumb {
+  background: #334155;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.35);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ─── Glass Card Base ───────────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-shadow);
+  padding: 20px;
+  transition: transform var(--transition-ui), box-shadow var(--transition-ui);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.14);
+}
+
+/* ─── Enhanced Glass Panel (layered depth) ──────────────────────────────────── */
+/* A richer glassmorphism treatment: a top sheen highlight, a soft inset glow,
+   and a hairline border that catches light — layered via box-shadow so the
+   background can stay a single semi-transparent fill (true glass = blur + light). */
+.glass-panel-deep {
+  position: relative;
+  background: linear-gradient(165deg, rgba(255,255,255,0.68), rgba(255,255,255,0.42));
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.7) inset,
+    0 -1px 0 0 rgba(99,102,241,0.06) inset,
+    0 10px 36px rgba(99,102,241,0.12),
+    0 2px 8px rgba(15,23,42,0.04);
+  transition: transform var(--transition-ui), box-shadow var(--transition-ui);
+}
+
+html.dark .glass-panel-deep {
+  background: linear-gradient(165deg, rgba(30,41,59,0.62), rgba(15,23,42,0.5));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.06) inset,
+    0 -1px 0 0 rgba(0,0,0,0.2) inset,
+    0 10px 36px rgba(0,0,0,0.35),
+    0 2px 8px rgba(0,0,0,0.2);
+}
+
+.glass-panel-deep:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.8) inset,
+    0 -1px 0 0 rgba(99,102,241,0.08) inset,
+    0 16px 44px rgba(99,102,241,0.18),
+    0 4px 12px rgba(15,23,42,0.06);
+}
+
+/* ─── Storage donut glass backing ───────────────────────────────────────────── */
+.storage-donut-backing {
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.5) 70%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow:
+    0 1px 2px rgba(255,255,255,0.8) inset,
+    0 4px 16px rgba(99,102,241,0.10);
+}
+
+html.dark .storage-donut-backing {
+  background: radial-gradient(circle at 35% 30%, rgba(51,65,85,0.7), rgba(15,23,42,0.6) 70%);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    0 1px 2px rgba(255,255,255,0.05) inset,
+    0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ─── Primary Button ────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, #3B82F6, #6366F1);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+  transition: filter var(--transition-ui), transform var(--transition-ui);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  transform: scale(1.02);
+}
+
+/* ─── Storage Bar ───────────────────────────────────────────────────────────── */
+.storage-bar-fill {
+  transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 999px;
+}
+
+.storage-bar-track {
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* ─── Page Entry Animation ──────────────────────────────────────────────────── */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter var(--transition-page) ease both;
+}
+
+/* ─── File List Stagger ─────────────────────────────────────────────────────── */
+@keyframes item-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.file-item-enter {
+  animation: item-fade-in 200ms ease both;
+}
+
+/* ─── Toast animations ─────────────────────────────────────────────────────── */
+@keyframes slide-in-from-right-5 {
+  from {
+    transform: translateX(1.25rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-in-from-right-5 {
+  animation-name: slide-in-from-right-5;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.duration-200 {
+  animation-duration: 200ms;
+}
+
+/* ─── Transition utilities ──────────────────────────────────────────────────── */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* ─── Focus visible (accessibility) ────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ─── Prevent layout shift on scrollbar appear ─────────────────────────────── */
+html {
+  overflow-y: scroll;
+}
+
+/* ─── Dark mode Tailwind class overrides ────────────────────────────────────── */
+html.dark .dark\:bg-slate-900  { background-color: rgba(15,23,42,0.7); }
+html.dark .dark\:bg-slate-800  { background-color: rgba(30,41,59,0.7); }
+html.dark .dark\:bg-slate-700  { background-color: #334155; }
+html.dark .dark\:bg-blue-700   { background-color: #1d4ed8; }
+html.dark .dark\:bg-blue-950   { background-color: #172554; }
+html.dark .dark\:bg-emerald-950{ background-color: #022c22; }
+html.dark .dark\:bg-amber-950  { background-color: #1c0a00; }
+html.dark .dark\:bg-red-950    { background-color: #1c0007; }
+
+html.dark .dark\:border-slate-700 { border-color: rgba(51,65,85,0.6); }
+html.dark .dark\:border-amber-900 { border-color: #78350f; }
+html.dark .dark\:border-blue-900  { border-color: #1e3a8a; }
+
+html.dark .dark\:text-white        { color: #ffffff; }
+html.dark .dark\:text-slate-400    { color: #94a3b8; }
+html.dark .dark\:text-slate-300    { color: #cbd5e1; }
+html.dark .dark\:text-blue-400     { color: #60a5fa; }
+html.dark .dark\:text-emerald-400  { color: #34d399; }
+html.dark .dark\:text-amber-400    { color: #fbbf24; }
+html.dark .dark\:text-amber-200    { color: #fde68a; }
+html.dark .dark\:text-red-400      { color: #f87171; }
+
+html.dark .dark\:hover\:bg-slate-800:hover  { background-color: rgba(30,41,59,0.7); }
+html.dark .dark\:hover\:bg-slate-700:hover  { background-color: #334155; }
+html.dark .dark\:hover\:bg-blue-600:hover   { background-color: #2563eb; }
+html.dark .dark\:hover\:bg-blue-900:hover   { background-color: #1e3a8a; }
+html.dark .dark\:hover\:bg-emerald-900:hover{ background-color: #064e3b; }
+html.dark .dark\:hover\:bg-red-950:hover    { background-color: #1c0007; }
+
+html.dark .dark\:ring-slate-700   { --tw-ring-color: #334155; }
+html.dark .dark\:ring-blue-900    { --tw-ring-color: #1e3a8a; }
+
+html.dark .dark\:focus\:ring-blue-900:focus {
+  --tw-ring-shadow: 0 0 0 4px #1e3a8a;
+  box-shadow: var(--tw-ring-shadow);
+}

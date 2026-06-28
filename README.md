@@ -1,7 +1,7 @@
 # ☁️ MriShan Drive
 
 <p align="center">
-  <img src="assets/logo.png" width="120" alt="MriShan Drive Logo">
+  <img src="assets/image.png" width="120" alt="MriShan Drive Logo">
 </p>
 
 <p align="center">
